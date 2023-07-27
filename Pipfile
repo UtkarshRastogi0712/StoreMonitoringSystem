@@ -11,6 +11,7 @@ starlette = "==0.20.4"
 uvicorn = "==0.19.0"
 pymysql = "*"
 sqlalchemy = "*"
+pandas = "*"
 
 [dev-packages]
 

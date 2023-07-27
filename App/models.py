@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 from datetime import datetime
 
 class Store(Base):
@@ -20,13 +20,14 @@ class BusinessHour(Base):
     end_time_local = Column(DateTime)
 
 class Timezone(Base):
-    __timezone__ = "timezones"
+    __tablename__ = "timezones"
 
     id = Column(Integer, primary_key=True)
     store_id = Column(Integer)
     timezone = Column(String(64))
 
 class Report(Base):
+    __tablename__ = "report"
     id = Column(Integer, primary_key=True)
     uptime_last_hour = Column(Integer)
     uptime_last_day = Column(Integer)
