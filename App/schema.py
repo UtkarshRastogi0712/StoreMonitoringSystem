@@ -20,7 +20,7 @@ class BusinessHour(BaseModel):
 class Timezone(BaseModel):
     id: int
     store_id: int
-    timezone: str
+    timezone_str: str
     class Config:
         orm_model = True
 

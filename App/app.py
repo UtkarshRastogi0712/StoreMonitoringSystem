@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 import services
 import models, schema
 from database import SessionLocal, engine
+from sqlalchemy.orm import Session
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -15,6 +16,7 @@ def get_db():
         db.close()
 
 @app.get("/")
-async def root():
-    services.get_data()
+async def root(db: Session = Depends(get_db)):
+    output = await services.get_data(db)
+    print(output)
     return {"message": "Hello World"}

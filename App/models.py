@@ -24,7 +24,7 @@ class Timezone(Base):
 
     id = Column(Integer, primary_key=True)
     store_id = Column(Integer)
-    timezone = Column(String(64))
+    timezone_str = Column(String(64))
 
 class Report(Base):
     __tablename__ = "report"
