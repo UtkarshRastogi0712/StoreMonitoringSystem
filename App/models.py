@@ -3,28 +3,28 @@ from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
 
-class Store(Base):
-    __tablename__ = "stores"
+class Timezone(Base):
+    __tablename__ = "timezones"
 
     store_id = Column(Integer, primary_key=True)
+    timezone_str = Column(String(64))
+
+class Store(Base):
+    __tablename__ = "stores"
+    
+    id = Column(String(32), primary_key=True)
+    store_id = Column(Integer)
     timestamp_utc = Column(DateTime)
     status = Column(String(8))
 
 class BusinessHour(Base):
     __tablename__ = "businesshours"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(32), primary_key=True)
     store_id = Column(Integer)
     dayOfWeek = Column(Integer)
     start_time_local = Column(DateTime)
     end_time_local = Column(DateTime)
-
-class Timezone(Base):
-    __tablename__ = "timezones"
-
-    id = Column(Integer, primary_key=True)
-    store_id = Column(Integer)
-    timezone_str = Column(String(64))
 
 class Report(Base):
     __tablename__ = "report"

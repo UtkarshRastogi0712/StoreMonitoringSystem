@@ -9,8 +9,18 @@ def create_store(db: Session, store: schema.Store):
     return db_store
 
 def create_timezone(db: Session, timezone: schema.Timezone):
-    db_timezone = models.Timezone(id = timezone.id, store_id = timezone.store_id, timezone_str = timezone.timezone_str)
+    db_timezone = models.Timezone(store_id = timezone.store_id, timezone_str = timezone.timezone_str)
     db.add(db_timezone)
     db.commit()
-    db.refresh(db_timezone)
+    db.flush()
     return 
+
+def create_businesshour(db: Session, businesshour: schema.BusinessHour):
+    db_businesshour = models.BusinessHour(id = businesshour.id, store_id = businesshour.store_id, dayOfWeek = businesshour.dayOfWeek, start_time_local = businesshour.start_time_local, end_time_local = businesshour.end_time_local)
+    db.add(db_businesshour)
+    db.commit()
+    db.refresh(db_businesshour)
+    return 
+
+def get_all(db: Session, table: str):
+    return db.query(table).all()

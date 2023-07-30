@@ -17,6 +17,6 @@ def get_db():
 
 @app.get("/")
 async def root(db: Session = Depends(get_db)):
-    output = await services.get_data(db)
+    output = await services.get_timezone_data(db)
     print(output)
     return {"message": "Hello World"}

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class Store(BaseModel):
+    id: str
     store_id: int
     timestamp_utc: datetime
     status: str
@@ -9,7 +10,7 @@ class Store(BaseModel):
         orm_model = True
 
 class BusinessHour(BaseModel):
-    id: int
+    id: str
     store_id: int
     dayOfWeek: int
     start_time_local: datetime
@@ -18,7 +19,6 @@ class BusinessHour(BaseModel):
         orm_model = True
 
 class Timezone(BaseModel):
-    id: int
     store_id: int
     timezone_str: str
     class Config:
