@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, BigInteger
 from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
@@ -6,14 +6,14 @@ from datetime import datetime
 class Timezone(Base):
     __tablename__ = "timezones"
 
-    store_id = Column(Integer, primary_key=True)
+    store_id = Column(BigInteger, primary_key=True)
     timezone_str = Column(String(64))
 
 class Store(Base):
     __tablename__ = "stores"
     
-    id = Column(String(32), primary_key=True)
-    store_id = Column(Integer)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    store_id = Column(BigInteger, ForeignKey('timezones.store_id'))
     timestamp_utc = Column(DateTime)
     status = Column(String(8))
 
@@ -21,7 +21,7 @@ class BusinessHour(Base):
     __tablename__ = "businesshours"
 
     id = Column(String(32), primary_key=True)
-    store_id = Column(Integer)
+    store_id = Column(BigInteger,  ForeignKey('timezones.store_id'))
     dayOfWeek = Column(Integer)
     start_time_local = Column(DateTime)
     end_time_local = Column(DateTime)

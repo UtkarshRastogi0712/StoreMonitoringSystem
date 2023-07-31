@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class Store(BaseModel):
-    id: str
     store_id: int
     timestamp_utc: datetime
     status: str
