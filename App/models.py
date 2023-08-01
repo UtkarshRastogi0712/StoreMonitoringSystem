@@ -13,7 +13,7 @@ class Store(Base):
     __tablename__ = "stores"
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    store_id = Column(BigInteger, ForeignKey('timezones.store_id'))
+    store_id = Column(BigInteger)
     timestamp_utc = Column(DateTime)
     status = Column(String(8))
 
@@ -21,7 +21,7 @@ class BusinessHour(Base):
     __tablename__ = "businesshours"
 
     id = Column(String(32), primary_key=True)
-    store_id = Column(BigInteger,  ForeignKey('timezones.store_id'))
+    store_id = Column(BigInteger)
     dayOfWeek = Column(Integer)
     start_time_local = Column(DateTime)
     end_time_local = Column(DateTime)

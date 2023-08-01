@@ -6,14 +6,10 @@ import uuid
 
 
 def process_timestamp(timestamp):
-    Y=int(timestamp[:4])
-    M=int(timestamp[5:7])
-    D=int(timestamp[8:10])
-    h=int(timestamp[11:13])
-    m=int(timestamp[14:16])
-    s=int(timestamp[17:19])
-    ms=int(timestamp[20:25])
-    return datetime(Y,M,D,h,m,s,ms)
+    timestamp_l=timestamp.split()
+    date_l=timestamp_l[0].split('-')
+    time_l=timestamp_l[1].replace('.',':').split(':')
+    return datetime(int(date_l[0]),int(date_l[1]),int(date_l[2]),int(time_l[0]),int(time_l[1]),int(time_l[2]),int(time_l[3]))
 
 def process_uuid():
     return str(uuid.uuid4())
@@ -33,7 +29,7 @@ async def get_timezone_data(db: Session):
             i=i+1
             row_schema = schema.Timezone(store_id = row["store_id"], timezone_str = row["timezone_str"])
             crud.create_timezone(db, row_schema)
-            if i%100==0:
+            if i%1000==0:
                 print("Read ", i , " rows from Timezones")
         else:
             print("Already exists")
@@ -45,5 +41,5 @@ async def get_store_data(db: Session):
         i=i+1
         row_schema = schema.Store(store_id = row["store_id"], timestamp_utc = process_timestamp(row["timestamp_utc"]), status = row["status"])
         crud.create_store(db, row_schema)
-        if i%100==0:
+        if i%1000==0:
             print("Read ", i , " rows from Stores")
