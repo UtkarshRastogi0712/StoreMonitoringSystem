@@ -16,7 +16,7 @@ def create_timezone(db: Session, timezone: schema.Timezone):
     return 
 
 def create_businesshour(db: Session, businesshour: schema.BusinessHour):
-    db_businesshour = models.BusinessHour(id = businesshour.id, store_id = businesshour.store_id, dayOfWeek = businesshour.dayOfWeek, start_time_local = businesshour.start_time_local, end_time_local = businesshour.end_time_local)
+    db_businesshour = models.BusinessHour(store_id = businesshour.store_id, dayOfWeek = businesshour.dayOfWeek, start_time_local = businesshour.start_time_local, end_time_local = businesshour.end_time_local)
     db.add(db_businesshour)
     db.commit()
     db.refresh(db_businesshour)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import models, schema, crud
 import uuid
 
@@ -10,6 +10,10 @@ def process_timestamp(timestamp):
     date_l=timestamp_l[0].split('-')
     time_l=timestamp_l[1].replace('.',':').split(':')
     return datetime(int(date_l[0]),int(date_l[1]),int(date_l[2]),int(time_l[0]),int(time_l[1]),int(time_l[2]),int(time_l[3]))
+
+def process_time(timestamp):
+    timestamp_l=timestamp.split(":")
+    return time(int(timestamp_l[0]), int(timestamp_l[1]), int(timestamp_l[2]))
 
 def process_uuid():
     return str(uuid.uuid4())
@@ -43,3 +47,17 @@ async def get_store_data(db: Session):
         crud.create_store(db, row_schema)
         if i%1000==0:
             print("Read ", i , " rows from Stores")
+
+async def get_businesshour_data(db: Session):
+    BusinessHours_data = pd.read_csv('Data\Menu hours.csv')
+    i=0
+    for ind, row in BusinessHours_data.iterrows():
+        i=i+1
+        if not row["start_time_local"]:
+            row["start_time_local"]="0:0:0"
+        if not row["end_time_local"]:
+            row["end_time_local"]="23:59:59"
+        row_schema = schema.BusinessHour(store_id = row["store_id"], dayOfWeek = row["day"], start_time_local=process_time(row["start_time_local"]), end_time_local=process_time(row["end_time_local"]))
+        crud.create_businesshour(db, row_schema)
+        if i%1000==0:
+            print("Read ", i , " rows from Business Hours")

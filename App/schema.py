@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, time
 
 class Store(BaseModel):
     store_id: int
@@ -9,11 +9,10 @@ class Store(BaseModel):
         orm_model = True
 
 class BusinessHour(BaseModel):
-    id: str
     store_id: int
     dayOfWeek: int
-    start_time_local: datetime
-    end_time_local: datetime
+    start_time_local: time
+    end_time_local: time
     class Config:
         orm_model = True
 
