@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta, time
 import models, schema, crud
 import uuid
+import pytz
 
 
 def process_timestamp(timestamp):
@@ -17,6 +18,16 @@ def process_time(timestamp):
 
 def process_uuid():
     return str(uuid.uuid4())
+
+def convert_timezone(timestamp, timezone):
+    target_tz = None
+    try:
+        target_tz = pytz.timezone(timezone)
+    except:
+        target_tz = pytz.timezone("America/Chicago")
+    source_tz = pytz.timezone('UTC')
+    target_dt = source_tz.localize(timestamp).astimezone(target_tz)
+    return target_dt
 
 async def get_timezone_data(db: Session):
     Timezone_data = pd.read_csv('Data\Timezones.csv')

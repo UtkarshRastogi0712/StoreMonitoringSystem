@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Depends
-import services
-import models, schema
+import models, schema, services, report
 from database import SessionLocal, engine
 from sqlalchemy.orm import Session
 
@@ -21,5 +20,6 @@ async def root(db: Session = Depends(get_db)):
     #output_timezone = await services.get_timezone_data(db)
     #output_store = await services.get_store_data(db)
     #output_businesshour = await services.get_businesshour_data(db)
-    print()
+    output = await report.generate_report_from_csv()
+    print(output)
     return {"message": "Hello World"}
