@@ -28,11 +28,10 @@ class BusinessHour(Base):
 class Report(Base):
     __tablename__ = "report"
     id = Column(Integer, primary_key=True, autoincrement=True)
+    store_id = Column(BigInteger)
     uptime_last_hour = Column(Integer)
     uptime_last_day = Column(Integer)
-    uptime_last_week = Column(Integer)
     downtime_last_hour = Column(Integer)
     downtime_last_day = Column(Integer)
-    downtime_last_week = Column(Integer)
 
     

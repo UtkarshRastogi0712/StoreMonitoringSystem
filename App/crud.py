@@ -12,7 +12,7 @@ def create_timezone(db: Session, timezone: schema.Timezone):
     db_timezone = models.Timezone(store_id = timezone.store_id, timezone_str = timezone.timezone_str)
     db.add(db_timezone)
     db.commit()
-    db.flush()
+    db.refresh(db_timezone)
     return 
 
 def create_businesshour(db: Session, businesshour: schema.BusinessHour):
@@ -21,6 +21,12 @@ def create_businesshour(db: Session, businesshour: schema.BusinessHour):
     db.commit()
     db.refresh(db_businesshour)
     return 
+
+def create_report(db: Session, report: schema.Report):
+    db_report = models.Report(store_id = report.store_id, uptime_last_hour = report.uptime_last_hour, downtime_last_hour = report.downtime_last_hour, uptime_last_day = report.uptime_last_day, downtime_last_day = report.downtime_last_day)
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
 
 def get_all(db: Session, table: str):
     return db.query(table).all()
