@@ -21,5 +21,6 @@ async def root(db: Session = Depends(get_db)):
     #output_store = await services.get_store_data(db)
     #output_businesshour = await services.get_businesshour_data(db)
     output = await report.generate_report_from_csv()
+    report.upload_to_db(db, output)
     print(output)
     return {"message": "Hello World"}

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 import pandas as pd
 from datetime import datetime, timedelta, time, date
-import models, schema, crud, services
+import schema, crud, services
 
 async def generate_report_from_csv():
     Timezone_data = pd.read_csv('Data\Timezones.csv')
@@ -15,7 +15,8 @@ async def generate_report_from_csv():
     print("Got local store uptime")
     report = get_last_hour(BusinessHours_data, max_timestamp, local_store_uptime)
     report = get_last_day(BusinessHours_data, max_timestamp, local_store_uptime, report)
-    report = get_last_week(BusinessHours_data, max_timestamp, local_store_uptime, report)
+    print("Uploading report in DB")
+    return report
 
 def get_store_uptime(Store_data):
     store_list = Store_data["store_id"].unique().tolist()
@@ -87,7 +88,7 @@ def get_last_hour(BusinessHours_data, max_timestamp, local_store_uptime):
                     bh_start_time, bh_end_time = last_hour, max_timestamp
                 start_point, end_point = None, None
                 if bh_end_time < last_hour or bh_start_time > max_timestamp:
-                    store_report["last_hour_uptime"] = 0
+                    store_report["uptime_last_hour"] = 0
                 else:
                     if bh_start_time < last_hour:
                         start_point = last_hour
@@ -105,8 +106,8 @@ def get_last_hour(BusinessHours_data, max_timestamp, local_store_uptime):
                 if temp_delta < 0:
                     temp_delta +=60
                     temp_delta*=-1
-                store_report["last_hour_uptime"] = int(temp_delta)
-                store_report["last_hour_downtime"] = 60 - store_report["last_hour_uptime"]
+                store_report["uptime_last_hour"] = int(temp_delta)
+                store_report["downtime_last_hour"] = 60 - store_report["uptime_last_hour"]
         report[i] = store_report
     return report
 
@@ -131,7 +132,7 @@ def get_last_day(BusinessHours_data, max_timestamp, local_store_uptime, report):
                     bh_start_time, bh_end_time = last_day, max_timestamp
                 start_point, end_point = None, None
                 if bh_end_time < last_day or bh_start_time > max_timestamp:
-                    store_report["last_day_uptime"] = 0
+                    store_report["uptime_last_day"] = 0
                 else:
                     if bh_start_time < last_day:
                         start_point = last_day
@@ -149,9 +150,19 @@ def get_last_day(BusinessHours_data, max_timestamp, local_store_uptime, report):
                 if temp_delta < 0:
                     temp_delta +=24
                     temp_delta*=-1
-                store_report["last_day_uptime"] = int(temp_delta)
-                store_report["last_day_downtime"] = 24 - store_report["last_day_uptime"]
+                store_report["uptime_last_day"] = int(temp_delta)
+                store_report["downtime_last_day"] = 24 - store_report["uptime_last_day"]
         report[i] = store_report
     print(report)
     return report
     
+def upload_to_db(db: Session, report):
+    for i in report:
+        store_report = report[i]
+        schema_report = schema.Report(store_id = i,
+                                        uptime_last_hour = store_report["uptime_last_hour"],
+                                        uptime_last_day = store_report["uptime_last_day"],
+                                        downtime_last_hour = store_report["downtime_last_hour"],
+                                        downtime_last_day = store_report["downtime_last_day"])
+        crud.create_report(db, schema_report)
+    print("Reports uploaded")

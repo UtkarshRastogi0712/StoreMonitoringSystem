@@ -23,7 +23,7 @@ class Timezone(BaseModel):
         orm_model = True
 
 class Report(BaseModel):
-    id: int
+    store_id: int
     uptime_last_hour: int
     uptime_last_day: int
     downtime_last_hour: int
