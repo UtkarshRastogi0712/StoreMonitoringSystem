@@ -7,3 +7,4 @@ pymysql #python mysql library
 sqlalchemy #sql toolkit orm
 pandas #read csv data
 pytz #timezone data 
+redis #Caching

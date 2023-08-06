@@ -2,8 +2,9 @@ from sqlalchemy.orm import Session
 import pandas as pd
 from datetime import datetime, timedelta, time, date
 import schema, crud, services
+import redis
 
-async def generate_report_from_csv(db: Session):
+async def generate_report_from_csv(db: Session, report_uuid: str, rd: redis.client.Redis):
     Timezone_data = pd.read_csv('Data\Timezones.csv')
     Store_data = pd.read_csv('Data\store status.csv')
     BusinessHours_data = pd.read_csv('Data\Menu hours.csv')
@@ -17,8 +18,9 @@ async def generate_report_from_csv(db: Session):
     report = get_last_day(BusinessHours_data, max_timestamp, local_store_uptime, report)
     print("Uploading report in DB")
     upload_to_db(db, report)
-    print("Done uploading")
-    return report
+    print("Caching in Redis")
+    output = await services.cache_redis(report_uuid, report, rd)
+    return output
 
 def get_store_uptime(Store_data):
     store_list = Store_data["store_id"].unique().tolist()

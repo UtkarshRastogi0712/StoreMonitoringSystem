@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
+from fastapi import Depends
 import pandas as pd
 from datetime import datetime, timedelta, time
 import models, schema, crud
 import uuid
 import pytz
-
+import redis
+import json
 
 def process_timestamp(timestamp):
     timestamp_l=timestamp.split()
@@ -72,3 +74,9 @@ async def get_businesshour_data(db: Session):
         crud.create_businesshour(db, row_schema)
         if i%1000==0:
             print("Read ", i , " rows from Business Hours")
+
+async def cache_redis(report_uuid: str, report: dict, rd: redis.client.Redis):
+    report_bin = json.dumps(report)
+    rd.mset({report_uuid:report_bin})
+    cached_data = rd.get(report_uuid)
+    return cached_data
