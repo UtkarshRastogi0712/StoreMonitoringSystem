@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta, time, date
 import schema, crud, services
 
-async def generate_report_from_csv():
+async def generate_report_from_csv(db: Session):
     Timezone_data = pd.read_csv('Data\Timezones.csv')
     Store_data = pd.read_csv('Data\store status.csv')
     BusinessHours_data = pd.read_csv('Data\Menu hours.csv')
@@ -16,16 +16,18 @@ async def generate_report_from_csv():
     report = get_last_hour(BusinessHours_data, max_timestamp, local_store_uptime)
     report = get_last_day(BusinessHours_data, max_timestamp, local_store_uptime, report)
     print("Uploading report in DB")
+    upload_to_db(db, report)
+    print("Done uploading")
     return report
 
 def get_store_uptime(Store_data):
     store_list = Store_data["store_id"].unique().tolist()
     store_active={}
     store_uptime={}
-    c=0
+    c=0 #testing limit
     for i in store_list:
-        c=c+1
-        if(c==10):
+        c+=1
+        if c==10:
             break
         temp_df=pd.DataFrame(Store_data[Store_data["store_id"]==i])
         temp_df.sort_values(by=["timestamp_utc"])
@@ -165,4 +167,3 @@ def upload_to_db(db: Session, report):
                                         downtime_last_hour = store_report["downtime_last_hour"],
                                         downtime_last_day = store_report["downtime_last_day"])
         crud.create_report(db, schema_report)
-    print("Reports uploaded")
